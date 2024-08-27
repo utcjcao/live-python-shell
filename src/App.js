@@ -1,9 +1,9 @@
-import "./App.css";
+import "./App.scss";
 import LivePythonShell from "./LivePythonShell";
 
 function App() {
   return (
-    <div className="App">
+    <div className="app-container">
       <LivePythonShell></LivePythonShell>
     </div>
   );

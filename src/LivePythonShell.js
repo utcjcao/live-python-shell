@@ -3,12 +3,16 @@ import { io } from "socket.io-client";
 
 const LivePythonShell = () => {
   const [socket, setSocket] = useState();
-  const [code, setCode] = useState();
+  const [code, setCode] = useState("");
   const [output, setOutput] = useState();
 
   const handleInputChange = (event) => {
     setCode(event.target.value);
-    socket.emit("send-changes", event.target.value);
+    socket.emit("send-input-changes", event.target.value);
+  };
+
+  const handleExecutionChange = () => {
+    socket.emit("execute-code", code);
   };
 
   useEffect(() => {
@@ -21,20 +25,42 @@ const LivePythonShell = () => {
 
   // recieve changes
   useEffect(() => {
+    if (socket == null) return;
     const handler = (newCode) => {
       setCode(newCode);
     };
-    socket.on("recieve-changes", handler);
+    socket.on("recieve-input-changes", handler);
     return () => {
-      socket.off("recieve-changes", handler);
+      socket.off("recieve-input-changes", handler);
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (socket == null) return;
+    const handler = (newOutput) => {
+      setOutput(newOutput);
+    };
+    socket.on("recieve-output-changes", handler);
+    return () => {
+      socket.off("recieve-output-changes", handler);
     };
   }, [socket]);
 
   useEffect(() => {});
   return (
-    <div>
-      <input value={code} onChange={handleInputChange}></input>
-    </div>
+    <>
+      <div className="input-container">
+        <textarea
+          className="input-box"
+          value={code}
+          onChange={handleInputChange}
+        ></textarea>
+        <button onClick={handleExecutionChange}>Run</button>
+      </div>
+      <div className="output-container">
+        <p>{output}</p>
+      </div>
+    </>
   );
 };
 
