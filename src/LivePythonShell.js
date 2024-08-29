@@ -1,14 +1,20 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { io } from "socket.io-client";
+import { Controlled as CodeMirror } from "react-codemirror2";
+import "codemirror/lib/codemirror.css";
+import "codemirror/theme/material.css";
+import "codemirror/mode/python/python"; // Import the Python mode
 
 const LivePythonShell = () => {
   const [socket, setSocket] = useState();
   const [code, setCode] = useState("");
   const [output, setOutput] = useState();
 
-  const handleInputChange = (event) => {
-    setCode(event.target.value);
-    socket.emit("send-input-changes", event.target.value);
+  const handleCodeChange = (editor, data, value) => {
+    setCode(value);
+    if (socket) {
+      socket.emit("send-input-changes", value);
+    }
   };
 
   const handleExecutionChange = () => {
@@ -26,23 +32,17 @@ const LivePythonShell = () => {
   // recieve changes
   useEffect(() => {
     if (socket == null) return;
-    const handler = (newCode) => {
+    const handler_code = (newCode) => {
       setCode(newCode);
     };
-    socket.on("recieve-input-changes", handler);
-    return () => {
-      socket.off("recieve-input-changes", handler);
-    };
-  }, [socket]);
-
-  useEffect(() => {
-    if (socket == null) return;
-    const handler = (newOutput) => {
+    const handler_output = (newOutput) => {
       setOutput(newOutput);
     };
-    socket.on("recieve-output-changes", handler);
+    socket.on("recieve-input-changes", handler_code);
+    socket.on("recieve-output-changes", handler_output);
     return () => {
-      socket.off("recieve-output-changes", handler);
+      socket.off("recieve-input-changes", handler_code);
+      socket.off("recieve-output-changes", handler_output);
     };
   }, [socket]);
 
@@ -50,15 +50,19 @@ const LivePythonShell = () => {
   return (
     <>
       <div className="input-container">
-        <textarea
-          className="input-box"
+        <CodeMirror
           value={code}
-          onChange={handleInputChange}
-        ></textarea>
+          options={{
+            mode: "python",
+            theme: "material",
+            lineNumbers: true,
+          }}
+          onBeforeChange={handleCodeChange}
+        />
         <button onClick={handleExecutionChange}>Run</button>
       </div>
       <div className="output-container">
-        <p>{output}</p>
+        <pre>{output}</pre>
       </div>
     </>
   );

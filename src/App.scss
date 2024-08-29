@@ -1,8 +1,50 @@
 .app-container {
     .input-container {
         .input-box {
-            width: 300px;
-            height: 500px;
+            
         }
     }
 }
+
+/* Styling the CodeMirror container */
+.CodeMirror {
+    height: 500px; /* Set the height of the editor */
+    border: 1px solid #ddd; /* Add a border around the editor */
+    border-radius: 4px; /* Add rounded corners */
+    font-family: 'Source Code Pro', monospace; /* Change the font */
+  }
+  
+  /* Customize the editor's scrollbar */
+  .CodeMirror-vscrollbar,
+  .CodeMirror-hscrollbar {
+    background-color: #f5f5f5; /* Background color of the scrollbar */
+  }
+  
+  .CodeMirror-gutters {
+    background: #f5f5f5; /* Background of the gutter (line numbers) */
+    border-right: 1px solid #ddd; /* Border on the right side of the gutter */
+  }
+  
+  /* Styling line numbers */
+  .CodeMirror-linenumber {
+    color: #888; /* Color of line numbers */
+  }
+  
+  /* Styling selected text */
+  .CodeMirror-selected {
+    background: #d3d3d3; /* Background color of selected text */
+  }
+  
+  /* Customizing syntax highlighting */
+  .cm-keyword {
+    color: #0074d9; /* Color for keywords */
+  }
+  
+  .cm-string {
+    color: #2ecc40; /* Color for strings */
+  }
+  
+  .cm-comment {
+    color: #7f8c8d; /* Color for comments */
+  }
+  
